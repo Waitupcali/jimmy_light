@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_name %} Search {% endblock page_name %}
+
+{% block content %}
+
+<h2>search!</h2>
+
+<form method="get" action="{% url 'stores:search' %}">
+    {{form.as_p}}
+    <button>Search</button>
+
+</form>
+
+<h3>Result</h3>
+
+{% for store in stores %}
+<h3> {{store.name}} </h3>
+{% endfor %}
+
+{% endblock content %}
