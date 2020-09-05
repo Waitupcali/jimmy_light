@@ -20,6 +20,8 @@
 
 <script charset="UTF-8">
 
+
+
     document.getElementById("container_main_h").className = "container_main_s";
     document.getElementById("main_item1_h").className = "main_title1_s";
     document.getElementById("main_item2_h").className = "main_title2_s";
@@ -39,6 +41,7 @@
     var temp = [];
     var temp_detail = {};
     var k = 0, j = 0;
+    var card_grabber = document.getElementById("wall_result_card");
 
     function initMap() {
 
@@ -114,8 +117,13 @@
             var lng1 = parseFloat("{{j.longitude_store}}".replace(/<[^>]+>/g, ''));
             var contentString =
                 '<div style="width:150px; background-color: blue; text-align:center;padding:10px;">{{j.name}}</div>';
-
-            temp_detail = { con: contentString, lat: lat1, lng: lng1 };
+            var card_class = "{{j.id}}";
+            var contentString2 = "{{j.name}}";
+            var create_card = document.createElement('div');
+            create_card.className = card_class;
+            create_card.textContent = contentString2;
+            card_grabber.appendChild(create_card);
+            temp_detail = { con: contentString, contentString2: contentString2, lat: lat1, lng: lng1, card_class: card_class };
             temp.push(temp_detail);
             k++;
             ("{% endfor %}");
@@ -129,8 +137,13 @@
             var lng1 = parseFloat("{{j.longitude_store}}".replace(/<[^>]+>/g, ''));
             var contentString =
                 '<div style="width:150px; background-color: blue; text-align:center;padding:10px;">{{j.name}}</div>';
-
-            temp_detail = { con: contentString, lat: lat1, lng: lng1 };
+            var card_class = "{{j.id}}";
+            var contentString2 = "{{j.name}}";
+            var create_card = document.createElement('div');
+            create_card.className = card_class;
+            create_card.textContent = contentString2;
+            card_grabber.appendChild(create_card);
+            temp_detail = { con: contentString, contentString2: contentString2, lat: lat1, lng: lng1, card_class: card_class };
             temp.push(temp_detail);
             k++;
             ("{% endfor %}");
@@ -147,9 +160,8 @@
             var marker = new google.maps.Marker({
                 position: new google.maps.LatLng({ lat: temp[i].lat, lng: temp[i].lng }),
                 map: map,
+                card_class: temp[i].card_class,
             });
-
-
             markers.push(marker);
 
             google.maps.event.addListener(marker, 'mouseover', (function (marker, i) {
@@ -158,33 +170,14 @@
                     infowindow.open(map, marker);
                 }
             })(marker, i));
+            console.log(marker.card_class);
+
 
 
         }
-
-
         // autoCenter();
 
         google.maps.event.addListener(map, "bounds_changed", function () { updateMarkers(map, markers, temp); })
-
-
-        // for (var i = 0; i < markers.length; i++) {
-        //     var mapBounds_card = map.getBounds();
-        //     var position;
-        //     var marker;
-        //     marker = markers[i];
-        //     position = marker.getPosition();
-
-        //     if (mapBounds_card.contains(position)) {
-        // const elem = document.getElementById('wall_result_card');
-        // const cardElem = document.createElement('div');
-        // cardElem.textContent = temp[i].con;
-        // elem.appendChild(cardElem);
-        //     } else {
-        //         console.log('nah');
-        //     }
-
-        // }
     }
 
 
@@ -208,10 +201,6 @@
 
             if (mapBounds.contains(position)) {
                 showMarker(map, marker);
-                const elem = document.getElementById('wall_result_card');
-                const cardElem = document.createElement('div');
-                cardElem.textContent = temp[i].con;
-                elem.appendChild(cardElem);
             } else {
                 hideMarker(map, marker);
             }
@@ -219,14 +208,25 @@
     }
 
     function showMarker(map, marker) {
+
         if (marker.getMap()) return;
         marker.setMap(map);
+
+        var card = document.getElementsByClassName(marker.card_class)[0];
+        console.log(card);
+        card.style.display = 'block';
+        return false;
     }
 
     function hideMarker(map, marker) {
+
         if (!marker.getMap()) return;
         marker.setMap(null);
-    }
 
+        var card = document.getElementsByClassName(marker.card_class)[0];
+        console.log(card);
+        card.style.display = 'none';
+        return false;
+    }
 
 </script>
