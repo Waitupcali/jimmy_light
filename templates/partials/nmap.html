@@ -1,0 +1,109 @@
+{% load static %}
+
+<div id="map" style="width:100%;height:400px;"></div>
+
+<!-- <script src="{% static 'js/map.js' with stores_result=stores_result %}" type="text/javascript"></script>-->
+
+<script>
+    var map = new naver.maps.Map("map", {
+        useStyleMap: true,
+        zoom: 16,
+        center: new naver.maps.LatLng(34.746749, 127.648331),
+    });
+
+    map.setOptions("minZoom", 10);
+    console.log("잘못된 참조 시점", map.getOptions("minZoom") === 10);
+
+    naver.maps.Event.once(map, "init_stylemap", function () {
+        console.log("올바른 참조 시점", map.getOptions("minZoom") === 10);
+    });
+
+    // Map Bound 설정
+
+    var bounds = map.getBounds(),
+        southWest = bounds.getSW(),
+        northEast = bounds.getNE(),
+        lngSpan = northEast.lng() - southWest.lng(),
+        latSpan = northEast.lat() - southWest.lat();
+
+    // Marker / info 변수설정
+    var markers = [];
+    var infoWindows = [];
+
+    var position = new naver.maps.LatLng(
+        southWest.lat() + latSpan * Math.random(),
+        southWest.lng() + lngSpan * Math.random()
+    );
+
+    // 열린 store의 Marker / info 뿌려주기
+    ("{% for j in stores_result %}");
+
+    var marker = new naver.maps.Marker({
+        map: map,
+        position: new naver.maps.LatLng(
+            "{{j.latitude_store}}",
+            "{{j.longitude_store}}"
+        ),
+    });
+
+    var infoWindow = new naver.maps.InfoWindow({
+        content:
+            '<div style="width:150px; background-color: blue; text-align:center;padding:10px;">{{j.name}}</div>' +
+            '<div style="width:150px;text-align:center;padding:10px;">{{j.store_openhour}}-{{j.store_closehour}}</div>',
+    });
+
+    markers.push(marker);
+    infoWindows.push(infoWindow);
+
+    ("{% endfor %}");
+
+
+    naver.maps.Event.addListener(map, "idle", function () {
+        updateMarkers(map, markers);
+    });
+
+    // 지도 이동에 따른 marker 표시 / 숨김
+    function getClickHandler(seq) {
+        return function (e) {
+            var marker = markers[seq],
+                infoWindow = infoWindows[seq];
+
+            if (infoWindow.getMap()) {
+                infoWindow.close();
+            } else {
+                infoWindow.open(map, marker);
+            }
+        };
+    }
+
+    for (var i = 0, ii = markers.length; i < ii; i++) {
+        naver.maps.Event.addListener(markers[i], "mouseover", getClickHandler(i));
+    }
+
+    function updateMarkers(map, markers) {
+        var mapBounds = map.getBounds();
+        var marker, position;
+
+        for (var i = 0; i < markers.length; i++) {
+            marker = markers[i];
+            position = marker.getPosition();
+
+            if (mapBounds.hasLatLng(position)) {
+                showMarker(map, marker);
+            } else {
+                hideMarker(map, marker);
+            }
+        }
+    }
+
+    function showMarker(map, marker) {
+        if (marker.getMap()) return;
+        marker.setMap(map);
+    }
+
+    function hideMarker(map, marker) {
+        if (!marker.getMap()) return;
+        marker.setMap(null);
+    }
+
+</script>

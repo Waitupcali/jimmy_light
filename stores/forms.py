@@ -5,14 +5,13 @@ from . import models
 
 class SearchForm(forms.Form):
 
+    # country = CountryField(default="KR", required=False).formfield()
     city = forms.CharField(required=False)
-    country = CountryField(default="KR").formfield()
+    check_in = forms.DateTimeField(required=False)
+    
     store_type = forms.ModelChoiceField(
         required=False, empty_label="Any Kind", queryset=models.StoreType.objects.all()
     )
-    price = forms.IntegerField(required=False)
-    guests = forms.IntegerField(required=False)
-    instant_book = forms.BooleanField(required=False)
     facilities = forms.ModelMultipleChoiceField(
         required=False,
         queryset=models.Facility.objects.all(),

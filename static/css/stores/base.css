@@ -3,3 +3,7 @@ html {
   background-size: 100%;
   color: white;
 }
+
+.map_base {
+  height: 200px;
+}

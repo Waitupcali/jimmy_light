@@ -1,0 +1,65 @@
+/* Header with title*/
+.container_main_s {
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: row;
+  height: 100px;
+  width: 100%;
+}
+
+.main_title1_s {
+  display: flex;
+  height: 100px;
+  width: 15%;
+  margin-top: 40px;
+  margin-left: 40px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 30px;
+}
+
+.main_title2_s {
+  display: flex;
+  height: 100px;
+  width: 70%;
+}
+
+.main_title2_1_s {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.main_title3_s {
+  display: flex;
+  height: 100px;
+  width: 15%;
+}
+
+/* Result */
+
+.wall_container {
+  display: inline-flex;
+  flex-direction: column;
+  height: 1000px;
+  width: 100%;
+}
+.wall_search {
+  display: flex;
+  height: 400px;
+  width: 100%;
+}
+.wall_result {
+  display: flex;
+  height: 800px;
+  width: 100%;
+}
+.wall_result_card {
+  display: flex;
+  height: 800px;
+  width: 50%;
+}
+.wall_result_map {
+  display: flex;
+  height: 800px;
+  width: 50%;
+}

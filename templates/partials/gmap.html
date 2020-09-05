@@ -1,0 +1,232 @@
+<style type="text/css">
+    /* Always set the map height explicitly to define the size of the div
+   * element that contains the map. */
+    #map {
+        height: 50%;
+    }
+
+    /* Optional: Makes the sample page fill the window. */
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+
+<div id="map" style="width:100%;height:400px;"></div>
+<div id="result_card"></div>
+
+<script charset="UTF-8">
+
+    document.getElementById("container_main_h").className = "container_main_s";
+    document.getElementById("main_item1_h").className = "main_title1_s";
+    document.getElementById("main_item2_h").className = "main_title2_s";
+    document.getElementById("main_title_h").className = "main_title2_1_s";
+    document.getElementById("main_item3_h").className = "main_title3_s";
+    document.getElementById("main_title_h").innerHTML = "";
+    document.getElementById("main_item1_h").innerHTML = "JIMMY";
+
+    "use strict";
+
+    //map rendering
+
+
+    var map;
+    var markers = [];
+    var infowindows = [];
+    var temp = [];
+    var temp_detail = {};
+    var k = 0, j = 0;
+
+    function initMap() {
+
+        if ("{{location}}" === "{}") {
+            var city_lat = 34.7603737;
+            var city_lng = 127.6622221;
+            alert('The city is not existing. Please search the valid city.');
+        }
+
+        else if ("{{city}}" && "{{location}}" !== "{}") {
+            var city_location_pre = ("{{location}}".slice(1, -1)).split(",");
+            city_lat = parseFloat(city_location_pre[0]);
+            city_lng = parseFloat(city_location_pre[1].trim());
+        }
+
+        else {
+            var city_lat = 34.7603737;
+            var city_lng = 127.6622221;
+            alert('The city is empty. Please search the valid city.');
+        }
+
+
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: city_lat, lng: city_lng },
+            zoom: 15,
+        });
+
+        // search bar
+        var input = document.getElementById("search");
+        var searchBox = new google.maps.places.SearchBox(input);
+
+        // Define a bound based on search
+        map.addListener("bounds_changed", function () {
+            searchBox.setBounds(map.getBounds());
+
+            // var serch_markers = [];
+
+            searchBox.addListener("places_changed", function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length === 0) return;
+
+                // serch_markers.forEach(function (e) {
+                //     e.setMap(null);
+                // });
+                // serch_markers = [];
+
+                var bounds = new google.maps.LatLngBounds();
+
+                places.forEach(function (p) {
+                    if (!p.geometry) return;
+
+                    // serch_markers.push(
+                    //     new google.maps.Marker({
+                    //         map: map,
+                    //         title: p.name,
+                    //         position: p.geometry.location,
+                    //     })
+                    // );
+
+                    if (p.geometry.viewport) bounds.union(p.geometry.viewport);
+                    else bounds.extend(p.geometry.location);
+                });
+                map.fitBounds(bounds);
+            });
+        });
+
+        if ("{{city}}") {
+            // When the city is existing
+            ("{% for j in stores_result %}");
+            var lat1 = parseFloat("{{j.latitude_store}}".replace(/<[^>]+>/g, ''));
+            var lng1 = parseFloat("{{j.longitude_store}}".replace(/<[^>]+>/g, ''));
+            var contentString =
+                '<div style="width:150px; background-color: blue; text-align:center;padding:10px;">{{j.name}}</div>';
+
+            temp_detail = { con: contentString, lat: lat1, lng: lng1 };
+            temp.push(temp_detail);
+            k++;
+            ("{% endfor %}");
+            k = 0;
+        }
+
+        else {
+            // When the city is NOT existing
+            ("{% for j in all_stores %}");
+            var lat1 = parseFloat("{{j.latitude_store}}".replace(/<[^>]+>/g, ''));
+            var lng1 = parseFloat("{{j.longitude_store}}".replace(/<[^>]+>/g, ''));
+            var contentString =
+                '<div style="width:150px; background-color: blue; text-align:center;padding:10px;">{{j.name}}</div>';
+
+            temp_detail = { con: contentString, lat: lat1, lng: lng1 };
+            temp.push(temp_detail);
+            k++;
+            ("{% endfor %}");
+
+            k = 0;
+        };
+
+        var infowindow = new google.maps.InfoWindow({
+            maxWidth: 205
+        });
+
+        // Add the markers and infowindows to the map
+        for (var i = 0; i < temp.length; i++) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng({ lat: temp[i].lat, lng: temp[i].lng }),
+                map: map,
+            });
+
+
+            markers.push(marker);
+
+            google.maps.event.addListener(marker, 'mouseover', (function (marker, i) {
+                return function () {
+                    infowindow.setContent(temp[i].con);
+                    infowindow.open(map, marker);
+                }
+            })(marker, i));
+
+
+        }
+
+
+        // autoCenter();
+
+        google.maps.event.addListener(map, "bounds_changed", function () { updateMarkers(map, markers, temp); })
+
+
+        // for (var i = 0; i < markers.length; i++) {
+        //     var mapBounds_card = map.getBounds();
+        //     var position;
+        //     var marker;
+        //     marker = markers[i];
+        //     position = marker.getPosition();
+
+        //     if (mapBounds_card.contains(position)) {
+        // const elem = document.getElementById('wall_result_card');
+        // const cardElem = document.createElement('div');
+        // cardElem.textContent = temp[i].con;
+        // elem.appendChild(cardElem);
+        //     } else {
+        //         console.log('nah');
+        //     }
+
+        // }
+    }
+
+
+    function autoCenter() {
+        //  Create a new viewpoint bound
+        var bounds = new google.maps.LatLngBounds();
+        //  Go through each...
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].position);
+        }
+        //  Fit these bounds to the map
+        map.fitBounds(bounds);
+    }
+
+    function updateMarkers(map, markers, temp) {
+        var mapBounds = map.getBounds();
+        var marker, position;
+        for (var i = 0; i < markers.length; i++) {
+            marker = markers[i];
+            position = marker.getPosition();
+
+            if (mapBounds.contains(position)) {
+                showMarker(map, marker);
+                const elem = document.getElementById('wall_result_card');
+                const cardElem = document.createElement('div');
+                cardElem.textContent = temp[i].con;
+                elem.appendChild(cardElem);
+            } else {
+                hideMarker(map, marker);
+            }
+        }
+    }
+
+    function showMarker(map, marker) {
+        if (marker.getMap()) return;
+        marker.setMap(map);
+    }
+
+    function hideMarker(map, marker) {
+        if (!marker.getMap()) return;
+        marker.setMap(null);
+    }
+
+
+</script>

@@ -45,14 +45,14 @@ class Photo(core_models.TimeStampedModel):
 class Store(core_models.TimeStampedModel):
 
     """ Store Model definition """
-
+    country = CountryField(default="KR")
     name = models.CharField(max_length=140)
     discription = models.TextField()
-    country = CountryField(default="South of Korea")
-    city = models.CharField(max_length=80)
+    city = models.CharField(max_length=80, default="Busan")
     section = models.CharField(max_length=80)    
-    price = models.IntegerField()
     address = models.CharField(max_length=140)
+    latitude_store = models.FloatField(default="0")
+    longitude_store = models.FloatField(default="0")
     luggage_large_store = models.IntegerField(help_text="size: confirmed later", default=3)
     luggage_medium_store = models.IntegerField(help_text="size: confirmed later", default=3)
     luggage_small_store = models.IntegerField(help_text="size: confirmed later", default=3)
@@ -75,11 +75,10 @@ class Store(core_models.TimeStampedModel):
 
     check_in = models.TimeField()
     check_out = models.TimeField()
-    instant_book = models.BooleanField(default=False)
     host = models.ForeignKey(
         "users.User", related_name="stores", on_delete=models.CASCADE, blank=True
     )
-    store_type = models.ForeignKey("StoreType", related_name="stores", on_delete=models.SET_NULL, null=True, blank=True)
+    store_type = models.ForeignKey("StoreType", default="gym", related_name="stores", on_delete=models.SET_NULL, null=True, blank=True)
     facilities = models.ManyToManyField("Facility", related_name="stores", blank=True)
 
 

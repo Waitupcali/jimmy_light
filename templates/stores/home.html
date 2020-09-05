@@ -2,12 +2,23 @@
 {% load static %}
 
 {% block page_name %} Home {% endblock page_name %}
-
+{% block map_header %}
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBE_vBFl9yeSHuMigXJAhhk4k5rpzhfxJc&callback=initMap2&libraries=places&v=weekly"
+    defer></script>
+{% endblock map_header%}
 
 {% include "partials/header.html" %}
 
 {% block content %}
-{% for store in stores %}
-<!-- <h1>{{store.name}} / ${{store.price}}</h1> -->
-{% endfor %}
+<form method="get" action="{% url 'stores:search' %}">
+    <input id="search2" class="search_box2" name="city" placeholder="Search by City" default="yeosu" type="text" />
+</form>
+
+<script>
+    function initMap2() {
+        var input2 = document.getElementById("search2");
+        var searchBox2 = new google.maps.places.SearchBox(input2);
+    }
+</script>
 {% endblock content %}

@@ -1,21 +1,64 @@
 {% extends "base.html" %}
+{% load static %}
+
+
 
 {% block page_name %} Search {% endblock page_name %}
-
+{% block map_header %}
+<link rel="stylesheet" href="{% static 'css/stores/search.css' %}">
+<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=kc3j4kbfd6"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBE_vBFl9yeSHuMigXJAhhk4k5rpzhfxJc&callback=initMap&libraries=places&v=weekly"
+    defer></script>
+{% endblock map_header%}
+{% block search-bar%}{% endblock search-bar%}
 {% block content %}
 
-<h2>search!</h2>
+<div class="wall_container">
+    <div class="wall_search">
+        <h2>Where to store?</h2>
 
-<form method="get" action="{% url 'stores:search' %}">
-    {{form.as_p}}
-    <button>Search</button>
+        <div>
+            <input class="search_box" id="search" type="text" placeholder="Search..." />
+        </div>
 
-</form>
+        <form method="get" action="{% url 'stores:search' %}">
+            <!-- {{form.city}} -->
+            {{form.check_in}}
+            {{form.store_type}}
+            {{form.facilities}}
+            <button>Search</button>
 
-<h3>Result</h3>
+        </form>
+    </div>
 
-{% for store in stores %}
-<h3> {{store.name}} </h3>
-{% endfor %}
+    <div class="wall_result">
+        <div class="wall_result_card" id="wall_result_card">
 
+
+
+            <!-- <h3>Result</h3>
+            <br>
+            {% if city %}
+            {% for store in stores_result %}
+            <br> {{store.host}} / {{store.name}} / {{store.latitude_store}}, {{store.longitude_store}}<br><br>
+            {% endfor %}
+
+            {% else %}
+
+            {% for store in all_stores %}
+            <br> {{store.host}} / {{store.name}} / {{store.latitude_store}}, {{store.longitude_store}}<br><br>
+            {% endfor %}
+            {% endif %} -->
+
+
+        </div>
+
+        <div class="wall_result_map">
+            {% include 'partials/gmap.html'%}
+        </div>
+
+    </div>
+</div>
 {% endblock content %}

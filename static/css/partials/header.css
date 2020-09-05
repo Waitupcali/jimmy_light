@@ -1,6 +1,6 @@
 /* HEADER STYLE */
 
-.container_main {
+.container_main_h {
   display: inline-flex;
   justify-content: center;
   align-content: center;
@@ -9,26 +9,24 @@
   width: 100%;
 }
 
-.main_item1 {
+.main_item1_h {
   display: flex;
   height: 200px;
   width: 15%;
 }
-.main_item2 {
+.main_item2_h {
   display: flex;
   height: 200px;
   width: 70%;
 }
-.main_item3 {
+
+.main_title_h {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.main_item3_h {
   display: flex;
   height: 200px;
   width: 15%;
-}
-
-.main_title {
-  color: white;
-  margin: auto;
-  font-size: 150px;
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
 }

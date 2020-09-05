@@ -29,14 +29,9 @@ class StoreAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Bacis Info",
-            {"fields": ("name", "discription", "city", "section", "address",)},
+            {"fields": ("name", "discription", "city", "section", "address", "store_type", "latitude_store", "longitude_store")},
         ),
 
-        (
-            "Price Option",
-            {"fields": ("price",)}
-
-        ),
 
         (
             "Luggage Option",
@@ -47,7 +42,7 @@ class StoreAdmin(admin.ModelAdmin):
             "Tiems for User",
             {   
                 # "classes": ("collapse",),
-                "fields": ("check_in", "check_out", "instant_book",)},
+                "fields": ("check_in", "check_out",)},
         ),
 
         (
@@ -76,31 +71,29 @@ class StoreAdmin(admin.ModelAdmin):
 
     list_display = (
         "name",
-        "country",
+        "latitude_store",
         "city",
         "section",
-        "price",
         "address",
         "host",
         "check_in",
         "check_out",
-        "instant_book",
         "count_facilities",
         "count_photos",
         "total_rating",
+        "store_type",
     )
 
     ordering = (
         "name",
-        "price",
     )
 
     list_filter = (
-        "instant_book",
         "store_type",
         "facilities",
         "city",
         "section",
+        "latitude_store",
     )
 
     raw_id_fields = ("host",)
